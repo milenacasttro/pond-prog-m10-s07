@@ -69,7 +69,7 @@ jobs:
           echo "flake8_status=completed" >> $GITHUB_OUTPUT
 
       - name: Upload flake8 report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: flake8-report
           path: flake8-report.json
@@ -111,7 +111,7 @@ jobs:
           python -m pytest tests/ --co -q | wc -l >> test-metrics.txt
 
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
@@ -121,7 +121,7 @@ jobs:
             .coverage
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage-report
@@ -162,7 +162,7 @@ jobs:
           cat workflow_metrics.json
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Create summary report
         run: |
@@ -174,7 +174,7 @@ jobs:
           echo "**Time:** $(date)" >> workflow-summary.md
 
       - name: Upload workflow metrics
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: workflow-metrics
           path: |
