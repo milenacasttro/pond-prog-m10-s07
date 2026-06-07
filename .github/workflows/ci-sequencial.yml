@@ -1,0 +1,87 @@
+name: CI Sequencial (sem cache)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  pipeline:
+    name: Pipeline Sequencial
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        id: lint
+        run: flake8 src/ tests/
+
+      - name: Testes
+        id: test
+        run: |
+          pytest tests/ -v \
+            --cov=src \
+            --cov-report=term \
+            --junit-xml=test-results.xml
+
+      - name: Exportar resumo de testes
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          root = ET.parse("test-results.xml").getroot()
+          summary = {
+              "test_count": int(root.attrib.get("tests", 0)),
+              "test_failures": int(root.attrib.get("failures", 0))
+              + int(root.attrib.get("errors", 0)),
+          }
+          Path("test-summary.json").write_text(json.dumps(summary))
+          PY
+
+      - name: Gerar metricas do workflow
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          summary = {"test_count": 0, "test_failures": 0}
+          if Path("test-summary.json").exists():
+              summary = json.loads(Path("test-summary.json").read_text())
+
+          payload = {
+              "workflow": "ci-sequencial",
+              "run_id": "${{ github.run_id }}",
+              "commit_sha": "${{ github.sha }}",
+              "timestamp": datetime.now(timezone.utc).isoformat(),
+              **summary,
+          }
+          Path("workflow-metrics.json").write_text(json.dumps(payload, indent=2))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: workflow-metrics-sequencial
+          path: |
+            test-results.xml
+            test-summary.json
+            workflow-metrics.json

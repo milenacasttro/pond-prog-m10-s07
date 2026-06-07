@@ -1,78 +1,40 @@
-# Analise de Pipeline CI/CD - Experimento Pratico
+# Experimento CI/CD - pond-prog-m10-s07
 
-## Descricao
-
-Experimento para medir e analisar comportamento de pipeline CI/CD no GitHub Actions. Coleta metricas reais de execucao, gera graficos e produz analise critica sobre desempenho, estabilidade e gargalos.
-
-## Tecnologia
-
-- Python 3.11+
-- Flask 2.3.0 (API REST)
-- Pytest 7.3.1 (testes)
-- GitHub Actions (CI/CD)
-- Pandas/Matplotlib (analise)
-
-## Setup Local
-
-```bash
-git clone https://github.com/milenacasttro/pond-prog-m10-s07
-cd pond-prog-m10-s07
-
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou: venv\Scripts\activate  # Windows
-
-pip install -r requirements.txt
-pytest tests/ -v
-```
+API Flask simples com pipeline no GitHub Actions, coleta de metricas e analise de desempenho.
 
 ## Estrutura
 
 ```
-src/app.py              API REST (12 endpoints)
-tests/test_api.py       Suite de testes (24 testes)
-.github/workflows/      Pipeline CI/CD (4 jobs)
-scripts/
-  collect_metrics.py    Coleta dados do GitHub Actions
-  generate_graphs.py    Gera 5 graficos de analise
-Entregaveis/            Saidas do experimento
+src/                          codigo da API
+tests/                        testes pytest
+.github/workflows/
+  ci-paralelo.yml             lint + test em paralelo, com cache
+  ci-sequencial.yml           lint + test em sequencia, sem cache
+Entregaveis/
+  coletar_metricas.py         coleta via API do GitHub
+  gerar_graficos.py           gera os 4 graficos
+  disparar_runs.py            dispara execucoes extras
+  dados/metricas.csv          base coletada
+  graficos/                   PNGs do experimento
+  relatorio.md                analise tecnica
+  como_reproduzir.md          passo a passo
 ```
 
-## Pipeline CI/CD
-
-4 jobs em paralelo (com dependencias):
-
-1. Setup: Instala dependencias + cache
-2. Lint: Analisa codigo (flake8)
-3. Test: Executa testes (pytest)
-4. Report: Coleta metricas do workflow
-
-## Coleta de Metricas
+## Setup
 
 ```bash
-python scripts/collect_metrics.py milenacasttro pond-prog-m10-s07 \
-  --workflow ci-pipeline.yml \
-  --limit 50 \
-  --output-csv Entregaveis/dados_metricas.csv \
-  --output-json Entregaveis/dados_metricas.json
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+pytest tests/ -v
+flake8 src/ tests/
 ```
 
-Metricas coletadas: run_id, commit_sha, branch, status, conclusion, workflow_duration, job_name, job_duration, test_count, test_failures, timestamp.
+## Links
 
-## Geracao de Graficos
+- Repositorio: https://github.com/milenacasttro/pond-prog-m10-s07
+- Workflow paralelo: https://github.com/milenacasttro/pond-prog-m10-s07/blob/main/.github/workflows/ci-paralelo.yml
+- Workflow sequencial: https://github.com/milenacasttro/pond-prog-m10-s07/blob/main/.github/workflows/ci-sequencial.yml
+- Actions: https://github.com/milenacasttro/pond-prog-m10-s07/actions
 
-```bash
-python scripts/generate_graphs.py Entregaveis/dados_metricas.csv --stats
-```
-
-Gera 5 graficos em `Entregaveis/graficos/`:
-
-1. Duracao do workflow por execucao
-2. Tempo por job
-3. Taxa de sucesso/falha
-4. Tests vs duracao (scatter + trend)
-5. Timeline de execucoes
-
-## Relatorio Tecnico
-
-Ver `Entregaveis/TEMPLATE_RELATORIO.md` para estrutura completa do relatorio final com analise dos resultados.
+Detalhes do experimento em `Entregaveis/como_reproduzir.md`.
