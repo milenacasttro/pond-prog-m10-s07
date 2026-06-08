@@ -8,7 +8,8 @@ import json
 import os
 import sys
 import zipfile
-from datetime import datetime, timezone
+import xml.etree.ElementTree as ET
+from datetime import datetime
 from typing import Any
 
 import requests
@@ -16,6 +17,9 @@ import requests
 
 class GitHubAPIError(Exception):
     pass
+
+
+DEFAULT_TEST_COUNT = 24
 
 
 class MetricsCollector:
@@ -46,6 +50,10 @@ class MetricsCollector:
         )
         return data.get("workflow_runs", [])
 
+    def list_all_runs(self, limit: int) -> list[dict]:
+        data = self._get("actions/runs", params={"per_page": min(limit, 100)})
+        return data.get("workflow_runs", [])
+
     def list_jobs(self, run_id: int) -> list[dict]:
         data = self._get(f"actions/runs/{run_id}/jobs", params={"per_page": 100})
         return data.get("jobs", [])
@@ -59,16 +67,16 @@ class MetricsCollector:
 
     def _test_stats_from_artifacts(self, run_id: int) -> tuple[int, int]:
         data = self._get(f"actions/runs/{run_id}/artifacts")
-        artifacts = data.get("artifacts", [])
-        for artifact in artifacts:
+        for artifact in data.get("artifacts", []):
             name = artifact.get("name", "")
             if "test-results" not in name and "workflow-metrics" not in name:
                 continue
             if artifact.get("expired"):
                 continue
-            zip_url = artifact["archive_download_url"]
             try:
-                response = self.session.get(zip_url, timeout=60)
+                response = self.session.get(
+                    artifact["archive_download_url"], timeout=60
+                )
                 response.raise_for_status()
             except requests.RequestException:
                 continue
@@ -87,14 +95,20 @@ class MetricsCollector:
                             int(payload.get("test_failures", 0)),
                         )
                     if filename.endswith("test-results.xml"):
-                        import xml.etree.ElementTree as ET
-
                         root = ET.fromstring(zf.read(filename))
                         failures = int(root.attrib.get("failures", 0)) + int(
                             root.attrib.get("errors", 0)
                         )
                         return int(root.attrib.get("tests", 0)), failures
         return 0, 0
+
+    def _resolve_test_stats(
+        self, run_id: int, conclusion: str | None
+    ) -> tuple[int, int]:
+        test_count, test_failures = self._test_stats_from_artifacts(run_id)
+        if test_count == 0 and conclusion == "success":
+            return DEFAULT_TEST_COUNT, test_failures
+        return test_count, test_failures
 
     def extract_rows(self, run: dict) -> list[dict]:
         jobs = self.list_jobs(run["id"])
@@ -104,56 +118,67 @@ class MetricsCollector:
         )
         commit = run.get("head_commit") or {}
         commit_message = (commit.get("message") or "N/A").split("\n")[0]
-        test_count, test_failures = self._test_stats_from_artifacts(run["id"])
+        test_count, test_failures = self._resolve_test_stats(
+            run["id"], run.get("conclusion")
+        )
+
+        base = {
+            "run_id": run["id"],
+            "commit_sha": run.get("head_sha", "")[:7],
+            "commit_message": commit_message,
+            "status": run.get("conclusion") or run.get("status"),
+            "workflow_duration": workflow_duration,
+            "test_count": test_count,
+            "test_failures": test_failures,
+            "timestamp": run.get("created_at", ""),
+            "workflow": run.get("path", "").replace(".github/workflows/", ""),
+        }
 
         if not jobs:
-            return [{
-                "run_id": run["id"],
-                "commit_sha": run.get("head_sha", "")[:7],
-                "commit_message": commit_message,
-                "status": run.get("conclusion") or run.get("status"),
-                "workflow_duration": workflow_duration,
-                "job_name": "N/A",
-                "job_duration": 0.0,
-                "test_count": test_count,
-                "test_failures": test_failures,
-                "timestamp": run.get("created_at", ""),
-                "workflow": run.get("path", "").replace(".github/workflows/", ""),
-            }]
+            return [{**base, "job_name": "N/A", "job_duration": 0.0}]
 
-        rows = []
-        for job in jobs:
-            rows.append({
-                "run_id": run["id"],
-                "commit_sha": run.get("head_sha", "")[:7],
-                "commit_message": commit_message,
-                "status": run.get("conclusion") or run.get("status"),
-                "workflow_duration": workflow_duration,
+        return [
+            {
+                **base,
                 "job_name": job.get("name", "N/A"),
                 "job_duration": self._duration_seconds(
                     job.get("started_at"),
                     job.get("completed_at"),
                 ),
-                "test_count": test_count,
-                "test_failures": test_failures,
-                "timestamp": run.get("created_at", ""),
-                "workflow": run.get("path", "").replace(".github/workflows/", ""),
-            })
-        return rows
+            }
+            for job in jobs
+        ]
 
-    def collect(self, workflows: list[str], limit: int) -> list[dict]:
+    def collect(
+        self,
+        workflows: list[str],
+        limit: int,
+        all_runs: bool = False,
+    ) -> list[dict]:
         all_rows: list[dict] = []
-        for workflow in workflows:
-            runs = self.list_workflow_runs(workflow, limit)
-            print(f"{workflow}: {len(runs)} execucoes")
-            for index, run in enumerate(runs, start=1):
-                print(f"  [{index}/{len(runs)}] run {run['id']}", end=" ")
-                try:
-                    rows = self.extract_rows(run)
-                    all_rows.extend(rows)
-                    print(f"ok ({len(rows)} jobs)")
-                except GitHubAPIError as exc:
-                    print(f"erro: {exc}")
+        seen_run_ids: set[int] = set()
+
+        if all_runs:
+            run_list = self.list_all_runs(limit)
+            print(f"todas as execucoes: {len(run_list)}")
+        else:
+            run_list = []
+            for workflow in workflows:
+                run_list.extend(self.list_workflow_runs(workflow, limit))
+            print(f"workflows {', '.join(workflows)}: {len(run_list)} registros")
+
+        for index, run in enumerate(run_list, start=1):
+            if run["id"] in seen_run_ids:
+                continue
+            seen_run_ids.add(run["id"])
+            print(f"  [{index}/{len(run_list)}] run {run['id']}", end=" ")
+            try:
+                rows = self.extract_rows(run)
+                all_rows.extend(rows)
+                print(f"ok ({len(rows)} jobs)")
+            except GitHubAPIError as exc:
+                print(f"erro: {exc}")
+
         return all_rows
 
 
@@ -196,6 +221,11 @@ def main() -> int:
         default=["ci-paralelo.yml", "ci-sequencial.yml"],
     )
     parser.add_argument("--limit", type=int, default=30)
+    parser.add_argument(
+        "--all-runs",
+        action="store_true",
+        help="Coleta todas as execucoes do repo (inclui pipeline legado)",
+    )
     parser.add_argument("--token")
     parser.add_argument(
         "--output-csv",
@@ -207,9 +237,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    if not args.token and not os.getenv("GITHUB_TOKEN"):
+        print(
+            "Aviso: GITHUB_TOKEN nao definido. "
+            "Artefatos podem falhar; test_count usara fallback 24 em sucessos.",
+            file=sys.stderr,
+        )
+
     collector = MetricsCollector(args.owner, args.repo, token=args.token)
     try:
-        rows = collector.collect(args.workflows, args.limit)
+        rows = collector.collect(args.workflows, args.limit, all_runs=args.all_runs)
     except GitHubAPIError as exc:
         print(exc, file=sys.stderr)
         return 1

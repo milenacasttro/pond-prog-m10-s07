@@ -86,7 +86,12 @@ jobs:
               "test_count": int(root.attrib.get("tests", 0)),
               "test_failures": int(root.attrib.get("failures", 0))
               + int(root.attrib.get("errors", 0)),
+              "test_total_time": float(root.attrib.get("time", 0)),
           }
+          tests = summary["test_count"]
+          summary["test_avg_time"] = (
+              round(summary["test_total_time"] / tests, 4) if tests else 0
+          )
           Path("test-summary.json").write_text(json.dumps(summary))
           PY
 

@@ -2,6 +2,7 @@
 """Gera graficos a partir do CSV de metricas."""
 
 import argparse
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -110,10 +111,20 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    csv_path = Path(args.csv)
+    if not csv_path.exists():
+        print(
+            f"Arquivo nao encontrado: {csv_path}\n"
+            "Rode primeiro: python Entregaveis/coletar_metricas.py "
+            "milenacasttro pond-prog-m10-s07 --all-runs --limit 30",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = load_data(args.csv)
+    df = load_data(str(csv_path))
     plot_total_duration(df, output_dir)
     plot_job_duration(df, output_dir)
     plot_success_failure(df, output_dir)

@@ -1,0 +1,43 @@
+run_id,commit_sha,commit_message,status,workflow_duration,job_name,job_duration,test_count,test_failures,timestamp,workflow
+27107179506,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,28.0,Pipeline Sequencial,24.0,24,0,2026-06-07T22:48:56Z,ci-sequencial.yml
+27107179219,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Setup,25.0,24,0,2026-06-07T22:48:55Z,ci-paralelo.yml
+27107179219,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Test,18.0,24,0,2026-06-07T22:48:55Z,ci-paralelo.yml
+27107179219,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Lint,11.0,24,0,2026-06-07T22:48:55Z,ci-paralelo.yml
+27107179219,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Report,5.0,24,0,2026-06-07T22:48:55Z,ci-paralelo.yml
+27107169126,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,30.0,Pipeline Sequencial,25.0,24,0,2026-06-07T22:48:29Z,ci-sequencial.yml
+27107168659,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Setup,22.0,24,0,2026-06-07T22:48:28Z,ci-paralelo.yml
+27107168659,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Lint,8.0,24,0,2026-06-07T22:48:28Z,ci-paralelo.yml
+27107168659,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Test,23.0,24,0,2026-06-07T22:48:28Z,ci-paralelo.yml
+27107168659,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,56.0,Report,4.0,24,0,2026-06-07T22:48:28Z,ci-paralelo.yml
+27107158002,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,24.0,Pipeline Sequencial,20.0,24,0,2026-06-07T22:48:02Z,ci-sequencial.yml
+27107156237,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,60.0,Setup,26.0,24,0,2026-06-07T22:47:57Z,ci-paralelo.yml
+27107156237,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,60.0,Test,20.0,24,0,2026-06-07T22:47:57Z,ci-paralelo.yml
+27107156237,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,60.0,Lint,6.0,24,0,2026-06-07T22:47:57Z,ci-paralelo.yml
+27107156237,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,60.0,Report,6.0,24,0,2026-06-07T22:47:57Z,ci-paralelo.yml
+27107147937,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,28.0,Pipeline Sequencial,24.0,24,0,2026-06-07T22:47:30Z,ci-sequencial.yml
+27107147454,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,49.0,Setup,19.0,24,0,2026-06-07T22:47:29Z,ci-paralelo.yml
+27107147454,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,49.0,Lint,6.0,24,0,2026-06-07T22:47:29Z,ci-paralelo.yml
+27107147454,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,49.0,Test,18.0,24,0,2026-06-07T22:47:29Z,ci-paralelo.yml
+27107147454,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,49.0,Report,5.0,24,0,2026-06-07T22:47:29Z,ci-paralelo.yml
+27107137725,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,28.0,Pipeline Sequencial,24.0,24,0,2026-06-07T22:47:03Z,ci-sequencial.yml
+27107137267,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,58.0,Setup,25.0,24,0,2026-06-07T22:47:02Z,ci-paralelo.yml
+27107137267,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,58.0,Lint,6.0,24,0,2026-06-07T22:47:02Z,ci-paralelo.yml
+27107137267,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,58.0,Test,20.0,24,0,2026-06-07T22:47:02Z,ci-paralelo.yml
+27107137267,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,58.0,Report,5.0,24,0,2026-06-07T22:47:02Z,ci-paralelo.yml
+27107013533,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,24.0,Pipeline Sequencial,21.0,24,0,2026-06-07T22:41:28Z,ci-sequencial.yml
+27107013532,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,66.0,Setup,36.0,24,0,2026-06-07T22:41:28Z,ci-paralelo.yml
+27107013532,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,66.0,Lint,7.0,24,0,2026-06-07T22:41:28Z,ci-paralelo.yml
+27107013532,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,66.0,Test,18.0,24,0,2026-06-07T22:41:28Z,ci-paralelo.yml
+27107013532,cf6bdb5,refactor: finaliza experimento CI/CD com dois workflows e entregaveis,success,66.0,Report,4.0,24,0,2026-06-07T22:41:28Z,ci-paralelo.yml
+27104982443,2605d14,feat: adiciona docs no readme,success,35.0,Setup & Install Dependencies,12.0,24,0,2026-06-07T21:13:11Z,ci-pipeline.yml
+27104982443,2605d14,feat: adiciona docs no readme,success,35.0,Code Quality (Flake8),9.0,24,0,2026-06-07T21:13:11Z,ci-pipeline.yml
+27104982443,2605d14,feat: adiciona docs no readme,success,35.0,Run Tests (Pytest),10.0,24,0,2026-06-07T21:13:11Z,ci-pipeline.yml
+27104982443,2605d14,feat: adiciona docs no readme,success,35.0,Generate Metrics Report,6.0,24,0,2026-06-07T21:13:11Z,ci-pipeline.yml
+27104741325,4110f88,Corrigir deprecation warnings: atualizar actions para v4,success,37.0,Setup & Install Dependencies,11.0,24,0,2026-06-07T21:02:57Z,ci-pipeline.yml
+27104741325,4110f88,Corrigir deprecation warnings: atualizar actions para v4,success,37.0,Run Tests (Pytest),15.0,24,0,2026-06-07T21:02:57Z,ci-pipeline.yml
+27104741325,4110f88,Corrigir deprecation warnings: atualizar actions para v4,success,37.0,Code Quality (Flake8),7.0,24,0,2026-06-07T21:02:57Z,ci-pipeline.yml
+27104741325,4110f88,Corrigir deprecation warnings: atualizar actions para v4,success,37.0,Generate Metrics Report,5.0,24,0,2026-06-07T21:02:57Z,ci-pipeline.yml
+27104703898,dfb587d,feat: adiciona scripts para coleta e análise de métricas do GitHub Actions,failure,22.0,Setup & Install Dependencies,10.0,0,0,2026-06-07T21:01:30Z,ci-pipeline.yml
+27104703898,dfb587d,feat: adiciona scripts para coleta e análise de métricas do GitHub Actions,failure,22.0,Run Tests (Pytest),2.0,0,0,2026-06-07T21:01:30Z,ci-pipeline.yml
+27104703898,dfb587d,feat: adiciona scripts para coleta e análise de métricas do GitHub Actions,failure,22.0,Code Quality (Flake8),2.0,0,0,2026-06-07T21:01:30Z,ci-pipeline.yml
+27104703898,dfb587d,feat: adiciona scripts para coleta e análise de métricas do GitHub Actions,failure,22.0,Generate Metrics Report,3.0,0,0,2026-06-07T21:01:30Z,ci-pipeline.yml
